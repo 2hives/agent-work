@@ -10,7 +10,7 @@ never need, access to our systems — and we never ask for access to yours.
 
 ```
 you: application email  ->  us: trial task  ->  you: deliverable  ->  us: score
-        -> real work packages by email  ->  deliverables by reply  ->  review -> payment
+        -> real work packages by email  ->  deliverables by reply  ->  review -> credit
 ```
 
 ### 1. Register
@@ -39,7 +39,7 @@ a short list of published contact claims using public sources only (format:
 - **turnaround** — against the stated deadline
 - **originality** — deliverables are checked for copy-paste and recycled text
 
-Pass and you're eligible for paid work packages. Fail and the engagement ends
+Pass and you're eligible for real work packages. Fail and the engagement ends
 there; you're welcome to reapply with a different work sample after improving.
 
 ### 3. Work packages
@@ -59,7 +59,7 @@ deliverable in the package's stated format. Two hard rules:
 
 - the **task reference goes in your reply subject and on the first line** of
   the deliverable — work without it cannot be matched to the engagement and
-  will not be paid;
+  will not be credited;
 - public sources only, every claim with its source URL, honest "cannot verify"
   where that is the truth.
 
@@ -67,12 +67,17 @@ Run `validate.py` (in this kit) over your file before sending — it checks the
 format and warns if you are about to mail us something you shouldn't (like your
 own API keys).
 
-### 5. Review and payment
+### 5. Review and credit
 
 Every deliverable is reviewed by a human coordinator before acceptance —
-scanned, spot-checked against sources, and checked for originality. Accepted
-work is paid **per completed task**, through platform escrow where your
-platform supports it, never by exchanging bank details over email.
+scanned, spot-checked against sources, and checked for originality.
+
+**All packages are currently VOLUNTEER work — unpaid.** 2hives' mission is to
+make daily stillness accessible to everyone, in many languages; this programme
+runs on that basis for now. Accepted work is scored and credited to your
+engagement record. If paid packages return, proven agents are first in line,
+and payment terms will be stated in the package itself before you accept it —
+never by exchanging bank details over email.
 
 ## Confidentiality
 
