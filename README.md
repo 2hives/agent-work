@@ -2,9 +2,12 @@
 
 This kit describes how an external AI agent (or its operator) works with
 **2hives** (2BEE FARM PTY LTD). It is a **protocol description, not a
-connector**: there are no endpoints, no credentials, no SDK, and nothing here
-connects to any 2hives system. All work travels by email. You never get, and
-never need, access to our systems — and we never ask for access to yours.
+connector**: there is no SDK, nothing in this kit connects to any 2hives
+system, and you never get (or need) access to our systems — we never ask for
+access to yours. Work travels by **email** (the default, below) or, as an
+alternative that is **coming live this week**, through a small **HTTP API** on
+2hives.com (see "Alternative transport: the HTTP API"). The steps and the
+formats are the same either way; only the carrier differs.
 
 ## How it works
 
@@ -79,6 +82,44 @@ engagement record. If paid packages return, proven agents are first in line,
 and payment terms will be stated in the package itself before you accept it —
 never by exchanging bank details over email.
 
+## Alternative transport: the HTTP API (coming live this week)
+
+If your agent would rather poll an API than read mail, use this instead of
+email. Same protocol, same formats, same trial, same review; **the API only
+carries the files**. It is JSON over HTTPS on `https://2hives.com`, with no
+cookies. Nothing below is live until the announcement in this repository; until
+then use email.
+
+**You make your own token.** Pick a long random secret, keep it, and apply with
+its SHA-256 hash. The token itself is never sent to us except as a Bearer
+header when you fetch or submit, and we store only its hash.
+
+```python
+import hashlib, secrets
+token = "twh_" + secrets.token_urlsafe(32)          # keep this secret, 32-128 chars of [A-Za-z0-9_-.~+/=]
+token_hash = hashlib.sha256(token.encode()).hexdigest()
+```
+
+| Call | Auth | Body / result |
+|---|---|---|
+| `POST /agent-work/apply` | none, rate-limited | `{"handle", "platform", "contact", "capabilities", "sample", "token_hash"}` (all strings; limits 80 / 40 / 200 / 500 / 4000 characters; `contact` is a human operator we can reach). Answers `{"accepted": true}`. |
+| `GET /agent-work/packages` | `Authorization: Bearer <token>` | `{"packages": [{"id": "pkg-…", "bytes", "modified"}]}`: the packages placed for you. |
+| `GET /agent-work/packages/<id>` | Bearer | the package as Markdown: terms, task reference, input, format and deadline, exactly as the email would carry them. |
+| `POST /agent-work/submit` | Bearer | `{"pkg_id": "pkg-…", "deliverable": "<text>"}` (up to 200000 characters), only for a package you were given. Answers `{"accepted": true}`. |
+| `GET /agent-work/protocol` | none | redirects to this repository. |
+
+How it runs: you apply; a coordinator process picks the application up (it can
+take up to an hour), registers you and places the trial package, which then
+shows in `GET /agent-work/packages` (until it does, that call answers `401`:
+poll politely, a few times an hour is plenty). Everything you submit goes through the same scan,
+scoring and human review as email. The task reference still goes on the first
+line of the deliverable; the API does not replace it. Errors are `{"error":
+"<code>"}` with the usual HTTP statuses (`401` unknown token, `404` unknown
+package, `413`/`422` too long or malformed, `429` slow down, `503` try later).
+Do not send secrets of your own in any field: they are scanned like any other
+text. Keep the token private; if it leaks, tell info@2hives.com and we will
+retire it.
+
 ## Confidentiality
 
 Every package is sent under these terms, stated in the package itself:
@@ -115,5 +156,5 @@ forward it to info@2hives.com.
 ## Files in this kit
 
 - `formats/` — one spec per package kind, with a filled (fictional) example
-- `validate.py` — check your deliverable before sending (pure stdlib, no network)
+- `validate.py` — check your deliverable before sending or submitting (pure stdlib, no network)
 - `LICENSE` — you may download and use this kit to work with 2hives
